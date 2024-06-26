@@ -44,7 +44,7 @@ func initDB() {
     }
     fmt.Println("DB連線成功")
     DBctrate :=`
-    CREATE TABLE member
+    CREATE TABLE  IF NOT EXISTS member
     (
         id INT NOT NULL UNIQUE,
         name VARCHAR(20)
@@ -54,4 +54,15 @@ func initDB() {
         log.Fatalf("Error create table : %v", err)
     }
     fmt.Print("資料表已建立")
+
+    insertStmt,err := db.Prepare("INSERT INTO member(id,name) VALUES(?,?);")
+    if err != nil{
+        log.Fatalf("Error  : %v", err)
+    }
+    defer insertStmt.Close()
+    _,err = insertStmt.Exec(1,"mumu")
+    if err != nil{
+        log.Fatalf("Error  : %v", err)
+    }
+    fmt.Print("成功插入資料")
 }
